@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173b68"><title>WINTHAI Vehicle Management</title>
+<style>
+:root{--navy:#173b68;--blue:#2563eb;--bg:#f3f6fb;--text:#172033;--muted:#64748b;--line:#dbe3ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--text)}
+header{background:linear-gradient(120deg,#173b68,#2563eb);color:#fff;padding:18px}
+.wrap{max-width:1000px;margin:auto}.brand{font-size:18px;font-weight:bold}.brand small{display:block;font-size:12px;font-weight:normal;margin-top:5px}
+main{max-width:1000px;margin:20px auto;padding:0 14px 35px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:16px}
+button{cursor:pointer;font:inherit;font-size:14px;font-weight:bold;border:0;border-radius:10px;padding:12px 15px}
+.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);color:#475569}.tab.active,.primary{background:var(--blue);color:#fff}
+.page{display:none}.page.active{display:block}.card{background:#fff;border:1px solid #e6ebf3;border-radius:15px;padding:18px;margin-bottom:15px;box-shadow:0 4px 14px #0f172a08}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:15px}.label,.hint{font-size:12px;color:var(--muted)}.value{font-size:26px;font-weight:bold;margin:9px 0}
+h2{font-size:18px;margin:0 0 15px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{font-size:13px;font-weight:bold;display:block;margin-bottom:7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;font:inherit;font-size:14px}.field{margin-bottom:3px}.full{grid-column:1/-1}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.light{background:#eef4ff;color:var(--navy)}.danger{background:#fff1f2;color:#b91c1c}
+.notice{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:12px;border-radius:10px;font-size:12px;line-height:1.6;margin-bottom:15px}
+.estimate{background:#ecfdf5;color:#065f46;border-radius:10px;padding:13px;margin:14px 0;font-weight:bold;font-size:14px}
+.photobox{border:2px dashed #cbd5e1;background:#f8fafc;padding:15px;border-radius:12px;text-align:center}.photobox img{display:none;max-width:100%;max-height:240px;margin:12px auto;border-radius:9px}
+.tablewrap{overflow:auto}table{width:100%;min-width:650px;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #e5eaf1;font-size:12px}th{background:#f8fafc}
+.empty{text-align:center;color:var(--muted);padding:24px}.toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:12px 18px;border-radius:10px;max-width:90%;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
+@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.grid .card:last-child{grid-column:1/-1}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.card{padding:14px}.value{font-size:23px}}
+@media(max-width:380px){.grid{grid-template-columns:1fr}.grid .card:last-child{grid-column:auto}}
+</style>
+
+<!-- WINTHAI Vehicle Management App -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#173b68">
+<link rel="apple-touch-icon" href="./icon-999.png">
+
+</head>
+<body>
+<header><div class="wrap brand">🚘 WINTHAI <small>VEHICLE MANAGEMENT · ระบบบันทึกการใช้รถ</small></div></header>
+<main>
+<nav class="tabs"><button class="tab active" data-page="home">ภาพรวม</button><button class="tab" data-page="entry">บันทึกเลขไมล์</button><button class="tab" data-page="history">ประวัติ</button><button class="tab" data-page="vehicles">ตั้งค่ารถ</button></nav>
+<section class="page active" id="home">
+<div class="notice"><b>โหมดทดลอง:</b> ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้เท่านั้น ยังไม่ส่งไป Google Sheets หรือ Google Drive</div>
+<div class="grid"><div class="card"><div class="label">เลขไมล์ล่าสุด</div><div class="value" id="latest">— km</div><div class="hint" id="latestCar">ยังไม่มีข้อมูล</div></div><div class="card"><div class="label">ระยะทางวันนี้</div><div class="value" id="today">0 km</div><div class="hint">จากรายการที่คำนวณได้</div></div><div class="card"><div class="label">รายการบันทึก</div><div class="value" id="count">0</div><div class="hint">บนอุปกรณ์นี้</div></div></div>
+<div class="card"><h2>เริ่มต้นใช้งาน</h2><p class="hint" style="line-height:1.7">เพิ่มรถก่อน จากนั้นบันทึกเลขไมล์ ถ่ายรูปหน้าปัด และใส่ชื่อผู้บันทึก ระบบคำนวณระยะทางจากเลขไมล์ก่อนหน้าให้</p><div class="actions"><button class="primary" onclick="page('entry')">📸 บันทึกเลขไมล์</button><button class="light" onclick="page('history')">📋 ดูประวัติ</button></div></div>
+<div class="card"><h2>รายการล่าสุด</h2><div id="recent" class="empty">ยังไม่มีรายการ</div></div>
+</section>
+<section class="page" id="entry"><div class="card"><h2>📸 บันทึกเลขไมล์รถ</h2>
+<form id="entryForm"><div class="formgrid">
+<div class="field"><label for="car">รถที่ใช้งาน *</label><select id="car" required></select></div>
+<div class="field"><label for="type">ประเภท *</label><select id="type"><option>เริ่มใช้งาน</option><option>สิ้นสุดการใช้งาน</option><option>ตรวจเลขไมล์ประจำวัน</option><option>เติมน้ำมัน</option></select></div>
+<div class="field"><label for="driver">ชื่อผู้ขับขี่/ผู้บันทึก *</label><input id="driver" required placeholder="กรอกชื่อ"></div>
+<div class="field"><label for="mileage">เลขไมล์ปัจจุบัน (km) *</label><input id="mileage" type="number" min="0" step="0.1" required placeholder="เช่น 85620"></div>
+<div class="field"><label for="datetime">วันที่และเวลา *</label><input id="datetime" type="datetime-local" required></div>
+<div class="field"><label for="purpose">วัตถุประสงค์</label><select id="purpose"><option value="">-- เลือก --</option><option>เข้าพบลูกค้า</option><option>ติดตั้งเครื่องจักร</option><option>ซ่อมบำรุงเครื่องจักร</option><option>รับส่งพนักงาน</option><option>เดินทางต่างจังหวัด</option><option>อื่น ๆ</option></select></div>
+<div class="field full"><label for="destination">สถานที่/รายละเอียด</label><input id="destination" placeholder="เช่น ชื่อลูกค้า หรือสถานที่ปลายทาง"></div>
+<div class="field full"><label for="photo">รูปถ่ายเลขไมล์</label><div class="photobox"><input id="photo" type="file" accept="image/*" capture="environment"><div class="hint">บนโทรศัพท์ เลือกกล้องหรือเลือกรูปจากเครื่องได้</div><img id="preview" alt="รูปเลขไมล์"><button class="light" id="removePhoto" type="button" style="display:none">ลบรูป</button></div></div>
+</div><div class="estimate" id="estimate">ระยะทางจากเลขไมล์ครั้งก่อน: ยังไม่มีข้อมูล</div><div class="actions"><button class="primary" type="submit">💾 บันทึกข้อมูล</button><button class="light" type="reset">ล้างแบบฟอร์ม</button></div></form>
+</div></section>
+<section class="page" id="history"><div class="card"><h2>📋 ประวัติการบันทึก</h2><div class="formgrid"><div class="field"><label for="filterCar">กรองตามรถ</label><select id="filterCar"><option value="">รถทุกคัน</option></select></div><div class="field"><label for="search">ค้นหาชื่อ/สถานที่</label><input id="search" placeholder="พิมพ์คำค้นหา"></div></div><div class="actions" style="margin-bottom:12px"><button class="light" id="csv">⬇ ส่งออก CSV</button><button class="danger" id="clear">ลบข้อมูลทดลองทั้งหมด</button></div><div class="tablewrap"><table><thead><tr><th>วันเวลา</th><th>ทะเบียน</th><th>ผู้บันทึก</th><th>ประเภท</th><th>เลขไมล์</th><th>ระยะทาง</th><th>รูป</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="noRows">ยังไม่มีรายการ</div></div></section>
+<section class="page" id="vehicles"><div class="card"><h2>⚙️ ตั้งค่ารถ</h2><p class="hint">เพิ่มทะเบียนรถเพื่อเริ่มทดสอบ</p><form id="vehicleForm"><div class="formgrid"><div class="field"><label for="plate">ทะเบียนรถ *</label><input id="plate" required placeholder="เช่น 1กข 1234"></div><div class="field"><label for="model">ชื่อรถ/ยี่ห้อรุ่น</label><input id="model" placeholder="เช่น Toyota Hilux"></div></div><div class="actions"><button class="primary" type="submit">＋ เพิ่มรถ</button></div></form><hr style="border:0;border-top:1px solid #e5eaf1;margin:20px 0"><div id="vehicleList"></div></div></section>
+<footer>WINTHAI Vehicle Management · Prototype สำหรับทดสอบหน้าจอ</footer></main><div class="toast" id="toast"></div>
+<script>
+const KEY="winthai_vehicle_demo_v1";let db=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{vehicles:[],logs:[]}}catch(e){return{vehicles:[],logs:[]}}})();let photo="";
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function say(s){$("toast").textContent=s;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2600)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function stamp(){let d=new Date();return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+function dateText(s){return new Date(s).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})}
+function car(id){return db.vehicles.find(v=>v.id===id)}
+function km(n){return Number(n).toLocaleString("th-TH",{maximumFractionDigits:1})+" km"}
+function page(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.page===id));if(id==="entry"&&!$("datetime").value)$("datetime").value=stamp();render();window.scrollTo(0,0)}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>page(b.dataset.page));
+function previous(id,date){return db.logs.filter(x=>x.carId===id&&new Date(x.date)<new Date(date)).sort((a,b)=>new Date(b.date)-new Date(a.date))[0]}
+function distance(x){let p=previous(x.carId,x.date);if(!p)return null;let n=Number(x.mileage)-Number(p.mileage);return n>=0?n:null}
+function updateEstimate(){let p=previous($("car").value,$("datetime").value);if(!p){$("estimate").textContent="ระยะทางจากเลขไมล์ครั้งก่อน: ยังไม่มีข้อมูล";return}let d=Number($("mileage").value)-Number(p.mileage);$("estimate").textContent=$("mileage").value?(d>=0?"ระยะทางจากครั้งก่อน: "+km(d)+" (เลขไมล์ก่อนหน้า "+km(p.mileage)+")":"⚠️ เลขไมล์น้อยกว่าครั้งก่อน กรุณาตรวจสอบ"):"เลขไมล์ก่อนหน้า: "+km(p.mileage);$("estimate").style.background=d<0?"#fff1f2":"#ecfdf5"}
+function render(){
+ let old=$("car").value,filter=$("filterCar").value;
+ $("car").innerHTML=db.vehicles.map(v=>`<option value="${v.id}">${esc(v.plate)}${v.model?" · "+esc(v.model):""}</option>`).join("")||'<option value="">กรุณาเพิ่มรถในเมนูตั้งค่ารถ</option>';if(db.vehicles.some(v=>v.id===old))$("car").value=old;
+ $("filterCar").innerHTML='<option value="">รถทุกคัน</option>'+db.vehicles.map(v=>`<option value="${v.id}">${esc(v.plate)}</option>`).join("");$("filterCar").value=filter;
+ $("vehicleList").innerHTML=db.vehicles.length?db.vehicles.map(v=>`<p><b>${esc(v.plate)}</b> — ${esc(v.model||"ไม่ระบุรุ่น")} <button class="danger" onclick="removeCar('${v.id}')">ลบ</button></p>`).join(""):'<div class="empty">ยังไม่มีรถ</div>';
+ let sorted=[...db.logs].sort((a,b)=>new Date(b.date)-new Date(a.date)),last=sorted[0];$("latest").textContent=last?km(last.mileage):"— km";$("latestCar").textContent=last?(car(last.carId)?.plate||"รถที่ลบแล้ว")+" · "+dateText(last.date):"ยังไม่มีข้อมูล";$("count").textContent=db.logs.length;
+ let today=new Date().toDateString();$("today").textContent=km(db.logs.filter(x=>new Date(x.date).toDateString()===today).reduce((s,x)=>s+(distance(x)||0),0));
+ $("recent").innerHTML=sorted.length?sorted.slice(0,5).map(x=>`<div style="padding:10px 0;border-bottom:1px solid #e5eaf1"><b>${esc(car(x.carId)?.plate||"รถที่ลบแล้ว")} · ${km(x.mileage)}</b><div class="hint">${esc(x.type)} · ${esc(x.driver)} · ${dateText(x.date)}</div></div>`).join(""):'<div class="empty">ยังไม่มีรายการ</div>';
+ let q=$("search").value.toLowerCase(),f=$("filterCar").value;let list=sorted.filter(x=>(!f||x.carId===f)&&(!q||[x.driver,x.destination,x.purpose,car(x.carId)?.plate].join(" ").toLowerCase().includes(q)));
+ $("rows").innerHTML=list.map(x=>`<tr><td>${esc(dateText(x.date))}</td><td>${esc(car(x.carId)?.plate||"—")}</td><td>${esc(x.driver)}</td><td>${esc(x.type)}<small>${esc(x.purpose)}</small></td><td>${km(x.mileage)}<small>${esc(x.destination)}</small></td><td>${distance(x)===null?"—":km(distance(x))}</td><td>${x.photo?`<a href="${x.photo}" target="_blank">ดูรูป</a>`:"—"}</td><td><button class="danger" onclick="removeLog('${x.id}')">ลบ</button></td></tr>`).join("");$("noRows").style.display=list.length?"none":"block";updateEstimate()
+}
+$("car").onchange=updateEstimate;$("datetime").onchange=updateEstimate;$("mileage").oninput=updateEstimate;$("filterCar").onchange=render;$("search").oninput=render;
+$("photo").onchange=()=>{let f=$("photo").files[0];photo="";if(!f)return;if(f.size>5*1024*1024){say("รูปใหญ่เกิน 5 MB กรุณาเลือกรูปที่เล็กลง");$("photo").value="";return}let r=new FileReader();r.onload=()=>{photo=r.result;$("preview").src=photo;$("preview").style.display="block";$("removePhoto").style.display="inline-block"};r.readAsDataURL(f)};
+$("removePhoto").onclick=()=>{photo="";$("photo").value="";$("preview").style.display="none";$("removePhoto").style.display="none"};
+$("entryForm").onreset=()=>setTimeout(()=>{photo="";$("preview").style.display="none";$("removePhoto").style.display="none";$("datetime").value=stamp();updateEstimate()},0);
+$("entryForm").onsubmit=e=>{e.preventDefault();if(!$("car").value){say("กรุณาเพิ่มรถก่อน");return}let mileage=Number($("mileage").value),date=new Date($("datetime").value);let p=previous($("car").value,date);if(p&&mileage<Number(p.mileage)){say("เลขไมล์น้อยกว่ารายการก่อนหน้า กรุณาตรวจสอบ");return}db.logs.push({id:String(Date.now()),carId:$("car").value,type:$("type").value,driver:$("driver").value.trim(),mileage,date:date.toISOString(),purpose:$("purpose").value,destination:$("destination").value.trim(),photo});try{save();$("entryForm").reset();$("datetime").value=stamp();page("home");say("บันทึกข้อมูลทดลองเรียบร้อย")}catch(err){say("พื้นที่จัดเก็บไม่เพียงพอ ลองลบรูปหรือใช้รูปขนาดเล็กลง")}};
+$("vehicleForm").onsubmit=e=>{e.preventDefault();let plate=$("plate").value.trim();if(db.vehicles.some(v=>v.plate.toLowerCase()===plate.toLowerCase())){say("ทะเบียนนี้มีอยู่แล้ว");return}db.vehicles.push({id:String(Date.now()),plate,model:$("model").value.trim()});$("vehicleForm").reset();save();say("เพิ่มรถแล้ว")};
+window.removeCar=id=>{if(db.logs.some(x=>x.carId===id)){say("รถคันนี้มีประวัติอยู่ จึงยังลบไม่ได้");return}if(confirm("ลบรถคันนี้หรือไม่?")){db.vehicles=db.vehicles.filter(v=>v.id!==id);save()}};
+window.removeLog=id=>{if(confirm("ลบรายการนี้หรือไม่?")){db.logs=db.logs.filter(x=>x.id!==id);save()}};
+$("clear").onclick=()=>{if(confirm("ยืนยันลบรถและรายการทดลองทั้งหมดจากเบราว์เซอร์นี้?")){db={vehicles:[],logs:[]};save();say("ลบข้อมูลทดลองแล้ว")}};
+$("csv").onclick=()=>{if(!db.logs.length){say("ยังไม่มีข้อมูล");return}let data=[["วันเวลา","ทะเบียน","ผู้บันทึก","ประเภท","เลขไมล์","ระยะทาง","วัตถุประสงค์","สถานที่"],...db.logs.map(x=>[dateText(x.date),car(x.carId)?.plate||"",x.driver,x.type,x.mileage,distance(x)??"",x.purpose,x.destination])];let csv="\uFEFF"+data.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="WINTHAI_VehicleLogs.csv";a.click();URL.revokeObjectURL(a.href)};
+$("datetime").value=stamp();render();
+</script></body></html>

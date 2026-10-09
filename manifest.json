@@ -1,0 +1,20 @@
+{
+ "id": "./",
+  "name": "WINTHAI Vehicle Management",
+  "short_name": "WINTHAI CAR",
+  "description": "ระบบบันทึกการใช้รถบริษัท WINTHAI",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#173b68",
+  "icons": [
+    {
+      "src": "./icon-999.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
